@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiAutores;
 
@@ -10,9 +11,10 @@ using WebApiAutores;
 namespace WebApiAutores.Migrations
 {
     [DbContext(typeof(ApplicationDbConbext))]
-    partial class ApplicationDbConbextModelSnapshot : ModelSnapshot
+    [Migration("20220531153916_Libros")]
+    partial class Libros
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,6 +47,9 @@ namespace WebApiAutores.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("Autor")
+                        .HasColumnType("int");
+
                     b.Property<int>("AutorId")
                         .HasColumnType("int");
 
@@ -60,13 +65,11 @@ namespace WebApiAutores.Migrations
 
             modelBuilder.Entity("WebApiAutores.Controllers.Entidades.Libro", b =>
                 {
-                    b.HasOne("WebApiAutores.Controllers.Entidades.Autor", "Autor")
+                    b.HasOne("WebApiAutores.Controllers.Entidades.Autor", null)
                         .WithMany("Libros")
                         .HasForeignKey("AutorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Autor");
                 });
 
             modelBuilder.Entity("WebApiAutores.Controllers.Entidades.Autor", b =>
