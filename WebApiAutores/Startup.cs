@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
 using WebApiAutores.Controllers;
+using WebApiAutores.Middlewares;
 using WebApiAutores.Servicios;
 
 namespace WebApiAutores
@@ -34,10 +35,22 @@ namespace WebApiAutores
             services.AddSwaggerGen();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            //app.UseMiddleware<LoguearRespuesraHTTPMiddleware>();
+            app.UseLoguearRespuestaHTTP();
+
+            app.Map("/ruta1", app =>
+            {
+                app.Run(async contexto =>
+                    {
+                        await contexto.Response.WriteAsync("Estoy interceptando la tuberia");
+                    });
+            });
+
             if (env.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
