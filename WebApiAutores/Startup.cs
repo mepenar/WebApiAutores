@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
+using WebApiAutores.Controllers;
+using WebApiAutores.Servicios;
 
 namespace WebApiAutores
 {
@@ -19,6 +22,13 @@ namespace WebApiAutores
 
             services.AddDbContext<ApplicationDbConbext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+
+            services.AddTransient<IServicio, ServicioA>();
+
+            services.AddTransient<ServicioTransient>();
+            services.AddScoped<ServicioScoped>();
+            services.AddSingleton<ServicioSingleton>();
+            //services.AddTransient<ServicioA>();
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
