@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using WebApiAutores.Controllers;
+using WebApiAutores.Filtros;
 using WebApiAutores.Middlewares;
-using WebApiAutores.Servicios;
 
 namespace WebApiAutores
 {
@@ -18,35 +20,29 @@ namespace WebApiAutores
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(x =>
+            services.AddControllers(opciones => 
+            {
+                opciones.Filters.Add(typeof(FiltroDeExcepcion));
+            }).AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             services.AddDbContext<ApplicationDbConbext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
 
-            services.AddTransient<IServicio, ServicioA>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
-            services.AddTransient<ServicioTransient>();
-            services.AddScoped<ServicioScoped>();
-            services.AddSingleton<ServicioSingleton>();
-            //services.AddTransient<ServicioA>();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiAutores", Version = "v1" });
+            });
 
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             //app.UseMiddleware<LoguearRespuesraHTTPMiddleware>();
             app.UseLoguearRespuestaHTTP();
-
-            app.Map("/ruta1", app =>
-            {
-                app.Run(async contexto =>
-                    {
-                        await contexto.Response.WriteAsync("Estoy interceptando la tuberia");
-                    });
-            });
 
             if (env.IsDevelopment())
             {
