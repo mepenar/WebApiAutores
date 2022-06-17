@@ -21,7 +21,7 @@ namespace WebApiAutores.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WebApiAutores.Controllers.Entidades.Autor", b =>
+            modelBuilder.Entity("WebApiAutores.Entidades.Autor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,22 +39,22 @@ namespace WebApiAutores.Migrations
                     b.ToTable("Autores");
                 });
 
-            modelBuilder.Entity("WebApiAutores.Controllers.Entidades.Libro", b =>
+            modelBuilder.Entity("WebApiAutores.Entidades.AutorLibro", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("AutorId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<int>("LibroId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                    b.Property<int>("Orden")
+                        .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("AutorId", "LibroId");
 
-                    b.ToTable("Libros");
+                    b.HasIndex("LibroId");
+
+                    b.ToTable("AutoresLibros");
                 });
 
             modelBuilder.Entity("WebApiAutores.Entidades.Comentario", b =>
@@ -78,9 +78,46 @@ namespace WebApiAutores.Migrations
                     b.ToTable("Comentarios");
                 });
 
+            modelBuilder.Entity("WebApiAutores.Entidades.Libro", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Libros");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entidades.AutorLibro", b =>
+                {
+                    b.HasOne("WebApiAutores.Entidades.Autor", "Autor")
+                        .WithMany("AutoresLibros")
+                        .HasForeignKey("AutorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApiAutores.Entidades.Libro", "Libro")
+                        .WithMany("AutoresLibros")
+                        .HasForeignKey("LibroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Autor");
+
+                    b.Navigation("Libro");
+                });
+
             modelBuilder.Entity("WebApiAutores.Entidades.Comentario", b =>
                 {
-                    b.HasOne("WebApiAutores.Controllers.Entidades.Libro", "Libro")
+                    b.HasOne("WebApiAutores.Entidades.Libro", "Libro")
                         .WithMany("Comenatrios")
                         .HasForeignKey("LibroId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -89,8 +126,15 @@ namespace WebApiAutores.Migrations
                     b.Navigation("Libro");
                 });
 
-            modelBuilder.Entity("WebApiAutores.Controllers.Entidades.Libro", b =>
+            modelBuilder.Entity("WebApiAutores.Entidades.Autor", b =>
                 {
+                    b.Navigation("AutoresLibros");
+                });
+
+            modelBuilder.Entity("WebApiAutores.Entidades.Libro", b =>
+                {
+                    b.Navigation("AutoresLibros");
+
                     b.Navigation("Comenatrios");
                 });
 #pragma warning restore 612, 618
