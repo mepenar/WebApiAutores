@@ -5,7 +5,7 @@ using WebApiAutores.Entidades;
 namespace WebApiAutores.Utilidades
 {
     public class AutoMapperProfiles: Profile
-    {
+    {56
         public AutoMapperProfiles()
         {
             CreateMap<AutorCreacionDTO, Autor>();
